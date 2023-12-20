@@ -1,0 +1,39 @@
+pipeline{
+agent any
+stages {
+    
+
+    
+stage( 'checkout' )
+{ 
+steps{  
+git url: 'https://github.com/srisri003/demo19dec.git'
+}
+}
+
+
+stage ('compile, test and package') {
+steps{
+sh 'mvn clean package'
+}
+}
+
+stage('Archive Output')
+{
+parallel{
+
+stage ('Archive Artifacts') { 
+steps{
+archiveArtifacts artifacts: 'target/*.jar', followSymlinks: false
+}
+}
+
+stage ('Publish Test Results') {
+	steps{
+junit 'target/surefire-reports/*.xml'
+}
+}
+
+}}
+}
+}
